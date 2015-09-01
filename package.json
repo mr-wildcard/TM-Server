@@ -1,0 +1,11 @@
+{
+  "name": "tm-server",
+  "version": "0.0.1",
+  "description": "Backend serving new tweets via socket.io to Admin UI",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Viala Julien <dev.vialajulien@gmail.com> (https://github.com/mr-wildcard)",
+  "license": "ISC"
+}
