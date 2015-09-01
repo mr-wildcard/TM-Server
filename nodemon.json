@@ -1,0 +1,10 @@
+{
+  "verbose": true,
+  "ignore": ["*.test.js", "fixtures/*", ".git/", "node_modules/"],
+  "execMap": {
+        "js": "node --harmony"
+    },
+    "env": {
+        "NODE_ENV": "development"
+    }
+}
