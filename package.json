@@ -9,4 +9,5 @@
   "author": "Viala Julien <dev.vialajulien@gmail.com> (https://github.com/mr-wildcard)",
   "license": "ISC"
     "koa": "^1.0.0",
+    "twit": "^2.1.0"
 }
