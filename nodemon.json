@@ -1,8 +1,8 @@
 {
   "verbose": true,
-  "ignore": ["*.test.js", "fixtures/*", ".git/", "node_modules/"],
+  "ignore": ["*.test.js", "fixtures/*", ".idea/"],
   "execMap": {
-        "js": "iojs server.js"
+        "js": "node --harmony server.js"
     },
     "env": {
         "NODE_ENV": "development"
