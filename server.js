@@ -8,6 +8,7 @@ let socketio = require('socket.io');
 let thinky = require('thinky')({
     db: 'tm'
 });
+let co = require('co');
 let type = thinky.type;
 let credentials = require('./credentials');
 let Twit = require('twit');
@@ -19,14 +20,15 @@ let Tweet = thinky.createModel('Tweet', {
     authorScreenName: type.string(),
     content: type.string(),
     avatarUrl: type.string(),
-    validated: type.boolean().default(false),
-    tweetTimestamp: type.date()
+    tweetTimestamp: type.date(),
+    accepted: type.boolean().default(false),
+    refused: type.boolean().default(false)
 });
 
 let app = koa();
 
 router.get('/new-tweets', function* (next) {
-    this.body = yield Tweet.orderBy('tweetTimestamp').limit(10).run();
+    this.body = yield Tweet.filter({ accepted: false, refused: false }).orderBy('tweetTimestamp').limit(10).run();
 });
 
 app.use(cors());
@@ -41,8 +43,8 @@ Tweet.changes().then(function(feed) {
         }
 
         if (tweet.isSaved() === false) {
-            console.log("The following document was deleted:");
-            console.log(stringify(tweet.getOldValue()));
+            console.log("A document was deleted.");
+            io.emit('tweet:refused', tweet.id );
         }
         else if (tweet.getOldValue() == null) {
             //console.log("A new tweet was inserted: " + tweet.id);
@@ -50,10 +52,7 @@ Tweet.changes().then(function(feed) {
         }
         else {
             console.log("A document was updated.");
-            console.log("Old value:");
-            console.log(stringify(tweet.getOldValue()));
-            console.log("New value:");
-            console.log(stringify(tweet));
+            io.emit(tweet.accepted ? 'tweet:accepted' : 'tweet:refused', tweet.id );
         }
     });
 }).error(function(error) {
@@ -90,14 +89,35 @@ stream.on('tweet', tweet => {
 });
 
 io.on('connection', socket => {
+
     console.log('Client Socket.IO connected...');
 
     socket.on('tweet:accept:start', tweet_id => {
-        console.log('accepting tweet ', tweet_id);
+
+        co(function* () {
+
+            let foundTweet = yield Tweet.get(tweet_id);
+
+            if (!foundTweet.accepted) {
+                foundTweet.merge({ accepted: true, refused: false }).save();
+            }
+
+        }).catch(console.error);
+
     });
 
     socket.on('tweet:refuse:start', tweet_id => {
-        console.log('accepting tweet ', tweet_id);
+
+        co(function* () {
+
+            let foundTweet = yield Tweet.get(tweet_id);
+
+            if (!foundTweet.refused) {
+                foundTweet.merge({ accepted: false, refused: true }).save();
+            }
+
+        }).catch(console.error);
+
     });
 
 });
