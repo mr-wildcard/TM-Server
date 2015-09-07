@@ -2,7 +2,7 @@
 
 let http = require('http');
 let koa = require('koa');
-let app = koa();
+let router = require('koa-router')();
 let socketio = require('socket.io');
 let thinky = require('thinky')({
     db: 'tm'
@@ -31,7 +31,11 @@ app.use(function *(next) {
     yield next;
     var ms = new Date - start;
     console.log('%s %s - %s', this.method, this.url, ms);
+router.get('/new-tweets', function* (next) {
+    this.body = yield Tweet.orderBy('tweetTimestamp').limit(10).run();
 });
+
+app.use(router.routes());
 
 Tweet.changes().then(function(feed) {
     feed.each(function(error, tweet) {
