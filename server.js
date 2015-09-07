@@ -19,7 +19,8 @@ let Tweet = thinky.createModel('Tweet', {
     authorScreenName: type.string(),
     content: type.string(),
     avatarUrl: type.string(),
-    validated: type.boolean().default(false)
+    validated: type.boolean().default(false),
+    tweetTimestamp: type.date()
 });
 
 let app = koa();
@@ -78,7 +79,8 @@ stream.on('tweet', tweet => {
         authorName: tweet.user.name,
         authorScreenName: tweet.user.screen_name,
         content: tweet.text,
-        avatarUrl: tweet.user.profile_image_url
+        avatarUrl: tweet.user.profile_image_url,
+        tweetTimestamp: parseInt(tweet.timestamp_ms)
     });
 
     _tweet
