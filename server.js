@@ -3,6 +3,7 @@
 let http = require('http');
 let koa = require('koa');
 let router = require('koa-router')();
+let cors = require('koa-cors');
 let socketio = require('socket.io');
 let thinky = require('thinky')({
     db: 'tm'
@@ -35,6 +36,7 @@ router.get('/new-tweets', function* (next) {
     this.body = yield Tweet.orderBy('tweetTimestamp').limit(10).run();
 });
 
+app.use(cors());
 app.use(router.routes());
 
 Tweet.changes().then(function(feed) {
