@@ -33,6 +33,7 @@ app.use(cors());
 app.use(router.routes());
 
 Tweet.changes().then(function(feed) {
+
     feed.each(function(error, tweet) {
         if (error) {
             console.log(error);
