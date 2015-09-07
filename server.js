@@ -22,16 +22,8 @@ let Tweet = thinky.createModel('Tweet', {
     validated: type.boolean().default(false)
 });
 
-Tweet.docAddListener('save', function(tweet) {
-    console.log("Table "+tweet+" is ready");
-});
+let app = koa();
 
-// logger
-app.use(function *(next) {
-    var start = new Date;
-    yield next;
-    var ms = new Date - start;
-    console.log('%s %s - %s', this.method, this.url, ms);
 router.get('/new-tweets', function* (next) {
     this.body = yield Tweet.orderBy('tweetTimestamp').limit(10).run();
 });
