@@ -91,8 +91,13 @@ stream.on('tweet', tweet => {
 
 io.on('connection', socket => {
     console.log('Client Socket.IO connected...');
-});
 
-io.on('tweet:accept:start', tweet_id => {
-    console.log('accepting tweet ' + tweet_id);
+    socket.on('tweet:accept:start', tweet_id => {
+        console.log('accepting tweet ', tweet_id);
+    });
+
+    socket.on('tweet:refuse:start', tweet_id => {
+        console.log('accepting tweet ', tweet_id);
+    });
+
 });
