@@ -31,6 +31,10 @@ router.get('/new-tweets', function* (next) {
     this.body = yield Tweet.filter({ accepted: false, refused: false }).orderBy('tweetTimestamp').limit(10).run();
 });
 
+router.get('/accepted-tweets', function* (next) {
+    this.body = yield Tweet.filter({ accepted: true, refused: false }).limit(100).run();
+});
+
 app.use(cors());
 app.use(router.routes());
 
